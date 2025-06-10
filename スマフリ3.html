@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>スマブラレート管理</title>
+    <style>
+        body { font-family: sans-serif; margin: 2em; }
+        label { display: block; margin-top: 1em; }
+        input[type="text"], input[type="number"] { width: 200px; }
+        .result { margin-top: 1em; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>スマブラレート管理</h1>
+    <div>
+        <label>あなたの名前: <input type="text" id="myName"></label>
+        <label>あなたのレート: <input type="number" id="myRating" value="1500"></label>
+        <button id="saveMe">保存</button>
+    </div>
+    <hr>
+    <div>
+        <label>対戦相手の名前: <input type="text" id="oppName"></label>
+        <label>対戦相手のレート（空欄なら自分と同じ）: <input type="number" id="oppRating"></label>
+        <label>勝敗:
+            <select id="win">
+                <option value="win">勝ち</option>
+                <option value="lose">負け</option>
+            </select>
+        </label>
+        <button id="fight">対戦！</button>
+    </div>
+    <div class="result" id="result"></div>
+    <script>
+        // ローカルストレージから自分のデータを読み込み
+        function loadMyData() {
+            const data = localStorage.getItem('mySmashRating');
+            if (data) {
+                const obj = JSON.parse(data);
+                document.getElementById('myName').value = obj.name;
+                document.getElementById('myRating').value = obj.rating;
+            }
+        }
+        // 保存
+        function saveMyData() {
+            const name = document.getElementById('myName').value.trim();
+            const rating = parseInt(document.getElementById('myRating').value) || 1500;
+            localStorage.setItem('mySmashRating', JSON.stringify({ name, rating }));
+        }
+        // イロレーティング計算
+        function calculateElo(myRating, oppRating, win, k = 40) {
+            const expected = 1 / (1 + Math.pow(10, (oppRating - myRating) / 400));
+            return Math.round(myRating + k * ((win ? 1 : 0) - expected));
+        }
+        // イベント
+        document.getElementById('saveMe').onclick = saveMyData;
+        document.getElementById('fight').onclick = function() {
+            const myName = document.getElementById('myName').value.trim();
+            let myRating = parseInt(document.getElementById('myRating').value) || 1500;
+            const oppName = document.getElementById('oppName').value.trim();
+            let oppRating = parseInt(document.getElementById('oppRating').value);
+            if (isNaN(oppRating)) oppRating = myRating;
+            const win = document.getElementById('win').value === 'win';
+            const newRating = calculateElo(myRating, oppRating, win);
+            document.getElementById('result').textContent =
+                `${myName} のレート: ${myRating} → ${newRating}（${win ? '勝ち' : '負け'}、相手: ${oppName} ${oppRating}）`;
+            document.getElementById('myRating').value = newRating;
+            saveMyData();
+        };
+        // 初期化
+        loadMyData();
+    </script>
+</body>
+</html>
