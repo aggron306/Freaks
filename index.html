@@ -3,11 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>スマブラレート管理</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: sans-serif; margin: 2em; }
+        body { font-family: sans-serif; margin: 2em; font-size: 1.5em; }
         label { display: block; margin-top: 1em; }
-        input[type="text"], input[type="number"] { width: 200px; }
-        .result { margin-top: 1em; font-weight: bold; }
+        input[type="text"], input[type="number"], select {
+            width: 95%;
+            font-size: 1.2em;
+            padding: 0.5em;
+            margin-top: 0.3em;
+            box-sizing: border-box;
+        }
+        button {
+            font-size: 1.2em;
+            padding: 0.7em 1.5em;
+            margin-top: 1em;
+            width: 100%;
+        }
+        .result { margin-top: 1em; font-weight: bold; font-size: 1.2em; }
+        hr { margin: 2em 0; }
+        @media (max-width: 600px) {
+            body { margin: 0.5em; font-size: 1.1em; }
+            button { font-size: 1em; }
+        }
     </style>
 </head>
 <body>
